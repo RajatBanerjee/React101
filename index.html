@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+    <script type="text/javascript" src="/public/libs/react.js"></script>
+	<script type="text/javascript" src="/public/libs/JSXTransformer.js"></script>
+    <link rel="stylesheet" href="/public/styles.css"></link>
+</head>
+<body>
+	<div id="myDiv"></div>
+      
+   <script type="text/jsx">
+    /** @jsx React.DOM */
+       var parentComponent = React.createClass({
+            getInitialState:function(){
+             return {initialItems:["Apple","Oranges","Grapes","Mangos"],items:[]} 
+           },
+           filterChange : function(evt){
+            var text = evt.target.value;
+            console.log(text);
+            var list = this.state.initialItems;
+            
+            list= list.filter(function(item){
+                 return item.toLowerCase().search(event.target.value.toLowerCase()) !== -1;
+            });
+            
+            this.setState({items: list})
+           },
+           componentWillMount: function(){
+             this.setState({items:this.state.initialItems})  
+           },
+            render : function(){
+                return(
+                    <div>
+                    <valueComponent/>
+                      <div className="listComponent">
+                        <input type="text" placeholder="filter.." onChange={this.filterChange}></input>
+                        <listComponent items={this.state.items}/>
+                      </div>
+                    </div>
+                )
+            }
+       })
+       
+       var valueComponent = React.createClass({
+           getInitialState:function(){
+             return {value:0} 
+           },
+           increment: function(){
+               this.setState({value:this.state.value+1});
+               alert("things changed =>"+ this.state.value)
+           },
+           decrement: function(){
+               this.setState({value:this.state.value-1});
+               alert("things changed =>"+ this.state.value)
+           },
+           render: function(){
+               return(
+                   <div className="counter">
+                    <h1>{this.props.prop1} {this.state.value}</h1>
+                    <button type="button" onClick={this.increment}> increase</button><button type="button" onClick={this.decrement}> decrease</button>
+                   </div>
+                   )
+           }
+       });
+       
+      var listComponent = React.createClass({
+        
+         render : function(){
+             return (
+                 <ul>{
+                     this.props.items.map(function(item) {
+                        return(<li>{item}</li>) 
+                     })
+                 }</ul>
+                 
+             )
+         } 
+      });
+     
+    React.renderComponent(
+    <parentComponent />,
+    document.getElementById('myDiv')
+    );
+    
+
+</script>
+</body>
+</html>
