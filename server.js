@@ -1,107 +1,57 @@
-var express = require('express')
-	,app 	= express()
-	,bunyan = require('bunyan')
-	,_ = require('underscore')
-	,util 	= require('util')
-	,os 	= require('os')
-	,childProcess = require('child_process');
+// Require our dependencies
+var express = require('express'),
+  exphbs = require('express-handlebars'),
+  http = require('http'),
+  mongoose = require('mongoose'),
+  twitter = require('twitter'),
+  routes = require('./Routes/routes');
+  //config = require('./config'),
+  //streamHandler = require('./utils/streamHandler');
 
+// Create an express instance and set a port variable
+var app = express();
+var port = process.env.PORT || 3000;
 
-var log = bunyan.createLogger({
-	name: "React 101",
-	serializers: bunyan.stdSerializers,
-	streams: [//stream opitons: all,debug,info,warn,error,off
-		// {
-		// 	stream: process.stdout,
-		// 	level: 'info'
-		// },
-		{
-			path: 'server.log',
-			level: 'debug',
-      period: '4h',   // daily rotation
-      count: 3        // keep 3 back copies
-		}
-	],
+// Connect to our mongo database
+mongoose.connect('mongodb://reactUser:pass@ds045097.mongolab.com:45097/meandb', function (params,b) {
+  console.log(params,b);
 });
-var eventLog = log.child({logType: 'event'});
-var requestLog = log.child({logType: 'request'});
+
+// Set handlebars as the templating engine
+app.engine('handlebars', exphbs({ defaultLayout: 'main'}));
+app.set('view engine', 'handlebars');
+
+// Disable etag headers on responses
+app.disable('etag');
 
 
-function logger(req, res, next) {
-	//log.info(req.headers);
-	if(req.body.remoteLog){
-		// eventLog.info(req.body.log)
-		eventLog.info({req:req},req.body.remoteLog)
-		//console.log(new Date(),(_.isString(req.body.log))?req.body.log:JSON.stringify(req.body.log))
-		console.log(new Date(),JSON.stringify(req.body.remoteLog))
-	}else{
-		requestLog.info({req:req});
-		console.log(new Date(),req.url)
-	}
-	// console.log('REQ: '+req.originalUrl);
-	// if(req.body.log)console.log('POST: '+JSON.stringify(req.body))
-	// if(/proxy/i.test(req.originalUrl))console.log('PROXY: '+req.originalUrl)
-	// if(req.body.log)console.log('LOG: '+req.body.log)
-	next(); // Passing the request to the next handler in the stack.
+// Isomorphic Route
+app.get('/Isomorphic', routes.index);
+
+
+// Set /public as our static content dir
+app.use("/", express.static(__dirname));
+
+var client ={
+  consumer_key: 'g7g5pyaYDt19cWlaX05LqSK6q',
+  consumer_secret: '3TyvT2tO9wfcMKvVhw7c9GfdwbPyLgUzkp9vIJ6L1fS5PH0VrZ',
+  access_token_key: '1427660108-Sbn9cQXqgNiufHXVXbH7TWrn4XooxxutGEGJYMx',
+  access_token_secret: 'OxwooObOGBkyxikCwUkut9wkCAysoEXEE2g0xS7PcrUON'
 }
 
+// Create a new ntwitter instance
+var twit = new twitter(client);
 
+// Fire this bitch up (start our server)
+var server = http.createServer(app).listen(port, function() {
+  console.log('Express server listening on port ' + port);
+});
 
-
-var serverPathArg = process.argv[2]||__dirname; //gets 3rd argument from command line or uses current location
-
-var rootDir = serverPathArg;
-
-var port 	= 3000;
-
-
-app.use(express.json());
-app.use(express.urlencoded());
-
-app.use(logger);
-
-app.use(express.static(rootDir));
-
-app.use('/log/',function(req,res){res.send('ok')})
-
-app.listen(port);
-
-
-//===================
-var addresses = getAddresses();
-console.log()
-console.log('* Make sure Chrome is closed before you run this, if you want the CORS policy disabled. *')
-console.log('Current Directory: '+__dirname)
-console.log('Serving files from: '+rootDir)
-console.log('Listening on: ' + addresses + ':' + port + '');
-console.log('Press Ctrl + C to stop.');
-
-//open in Chrome w/CORS disabled
-var address = addresses[0]+':'+port;
-// childProcess.exec('osascript -e \'quit app "Chrome"\'');
-childProcess.exec('/usr/bin/open -a "/Applications/Google Chrome.app" --args --disable-web-security '+address);
-// childProcess.exec('open http://jira.art.com:8080/secure/Dashboard.jspa');
-
-
-//=====================
-function getAddresses(){
-	var interfaces = os.networkInterfaces(),
-		addresses = [];
-	
-	_.each(interfaces,function(net){
-		_.each(net,function(address){
-			if (address.family == 'IPv4' && !address.internal) addresses.push(address.address);
-		})
-	})
-
-	return addresses;
-}
-
-
-
-// 
-// sudo dtrace -x strsize=4k -qn 'bunyan*:::log-*/strstr(this->str = copyinstr(arg0), "\"logType\":\"event\"") != NULL/{printf("%s", this->str)}'
-
-
-
-
+// Initialize socket.io
+var io = require('socket.io').listen(server);
+// Set a stream listener for tweets matching tracking keywords
+//twit.stream('statuses/filter',{ track: 'javascript'}, function(stream){
+//   stream.on('data', function(data) {
+//     console.log(data)
+//   });
+//});
