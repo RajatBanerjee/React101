@@ -5,7 +5,7 @@ var express = require('express'),
   mongoose = require('mongoose'),
   isomorphicRoutes = require('./Routes/isomorphicRoutes'),
   config = require('./config'),
-  Twitter = require('twitter')
+  Twitter = require('twitter'),
   tweetController= require('./Controllers/tweetController');
   
   //streamHandler = require('./utils/streamHandler');
@@ -38,7 +38,7 @@ app.get('/Isomorphic', isomorphicRoutes.index);
 
 
 // Set /public as our static content dir
-app.use("/", express.static(__dirname));
+app.use("/", express.static(__dirname + "/public/"));
 
 
 var server = http.createServer(app).listen(port, function() {

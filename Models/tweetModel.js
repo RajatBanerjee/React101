@@ -13,11 +13,12 @@ var tweetSchema = new mongoose.Schema({
 
 tweetSchema.statics.findTweets = function(page,skip,callback){
 
-	var start = 10*page + skip,
+	var start = 9*page + skip,
 		tweets =[];
 	Tweet.find({},'twid active author avatar body date screenname',{skip:start,limit:10}).sort({date:'desc'}).exec(function(err,data){
 		if(!err){
 			tweets= data;
+			callback(tweets);
 		}
 	});
 };
