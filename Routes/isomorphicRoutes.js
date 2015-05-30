@@ -1,15 +1,12 @@
 var JSX = require('node-jsx').install(),
   React = require('react'),
   TweetsApp = require('../Components/tweetApp.react.js'),
-  Tweet = require('../Models/tweetModel');
+  Tweet = require('../Models/tweetModel'),
+  express = require('express'),
+  router = express.Router();
 
-
-module.exports = {
-
-  index: function(req, res) {
-
-
-   // res.send("olo");
+router.get('/',function(req,res,next){
+  // res.send("olo");
     //  // Call static model method to get tweets in the db
     Tweet.findTweets(0,0, function(tweets, pages) {
       var markup = React.renderComponentToString(
@@ -24,17 +21,15 @@ module.exports = {
       });
 
     });
-    
-  },
+});
 
-  page: function(req, res) {
-    // Fetch tweets by page via param
-    Tweet.getTweets(req.params.page, req.params.skip, function(tweets) {
+router.get("/page/:page/:skip", function(req,res,next){
+  Tweet.findTweets(req.params.page, req.params.skip, function(tweets) {
 
       // Render as JSON
       res.send(tweets);
 
     });
-  }
+});
 
-}
+module.exports = router;
