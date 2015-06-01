@@ -142,14 +142,14 @@ footer .update-message
 
 .notification-bar
 {
+    width: 561px;
+    left: 671px;
+    z-index: 2;
+    border-radius: 3px;
     font-size: 13px;
     font-weight: bold;
-
     position: fixed;
     top: -60px;
-
-    width: 100%;
-
     -webkit-transition: 300ms top ease;
        -moz-transition: 300ms top ease;
         -ms-transition: 300ms top ease;
@@ -158,12 +158,12 @@ footer .update-message
     text-align: center;
 
     color: white;
-    background: rgba(241, 196, 15,.9);
+    background: rgba(241, 196, 15,.7);
 }
 
 .notification-bar.active
 {
-    top: 0;
+    top: 59px;
 }
 
 .notification-bar a
@@ -181,7 +181,7 @@ footer .update-message
 .tweet
 {
     position: relative;
-    display: block;
+    display: none;
     color: #2c3e50;
     height: 78px;
     margin: 6px;
@@ -193,6 +193,7 @@ footer .update-message
 
 .tweet.active
 {
+    display: block;
     max-height: 125px;
     margin: 20px 0;
 

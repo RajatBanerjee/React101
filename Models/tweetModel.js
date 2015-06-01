@@ -18,8 +18,12 @@ tweetSchema.statics.findTweets = function(page,skip,callback){
 	Tweet.find({},'twid active author avatar body date screenname',{skip:start,limit:10}).sort({date:'desc'}).exec(function(err,data){
 		if(!err){
 			tweets= data;
-			callback(tweets);
+			tweets.forEach(function(tweet) {
+				tweet.active = true; // Set them to active
+			});
 		}
+
+		callback(tweets);
 	});
 };
 

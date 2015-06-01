@@ -2,7 +2,7 @@
 
 var React = require('react');
 var Tweet = require('./tweetComponent.react.js');
-
+var NotificationBar = require('./notificationComponent.react.js');
 module.exports = Tweets = React.createClass({
 
   // Render our tweets

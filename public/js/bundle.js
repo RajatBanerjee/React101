@@ -5,10 +5,11 @@ var React = require('react');
 var notificationComponent = React.createClass({displayName: 'notificationComponent',
 
 	render: function() {
+		var count = this.props.count;
 		return (
-			React.DOM.div({className: "notification-bar"}, 
-				React.DOM.p(null, "There are ", this.count, " new tweets", 
-					React.DOM.a({href: "#top", onCLick: this.props.showNewTweets}, " Click here to see them")
+			 React.DOM.div({className: "notification-bar" + (count > 0 ? ' active' : '')}, 
+				React.DOM.p(null, "There are ", count, " new tweets", 
+					React.DOM.a({href: "#top", onClick: this.props.onshowNewTweets}, " Click here to see them")
 				)
 			)
 		);
@@ -197,7 +198,9 @@ module.exports = TweetsApp = React.createClass({displayName: 'TweetsApp',
 	render: function() {
 
 		return ( React.DOM.div({className: "tweets-app"}, 
-			NotificationBar({count: this.state.count, onShowNewTweets: this.showNewTweets}), " ", Tweets({tweets: this.state.tweets}))
+					NotificationBar({count: this.state.count, onshowNewTweets: this.showNewTweets}), 
+					Tweets({tweets: this.state.tweets})
+				)
 		)
 
 	}
@@ -230,7 +233,7 @@ module.exports = Tweet = React.createClass({displayName: 'Tweet',
 
 var React = require('react');
 var Tweet = require('./tweetComponent.react.js');
-
+var NotificationBar = require('./notificationComponent.react.js');
 module.exports = Tweets = React.createClass({displayName: 'Tweets',
 
   // Render our tweets
@@ -251,7 +254,7 @@ module.exports = Tweets = React.createClass({displayName: 'Tweets',
   }
 
 }); 
-},{"./tweetComponent.react.js":3,"react":148}],5:[function(require,module,exports){
+},{"./notificationComponent.react.js":1,"./tweetComponent.react.js":3,"react":148}],5:[function(require,module,exports){
 /**
  * Copyright 2013-2014 Facebook, Inc.
  *
