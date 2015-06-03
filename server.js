@@ -35,13 +35,13 @@ app.disable('etag');
 
 // Connect to our mongo database
 // try the local mongo db
-mongoose.connect( config.mongodb.localMongo, function(error){
-  if(error){
-    console.log(error);
-  }else{
-    console.log("COnnected to DB")
-  }
-});
+// mongoose.connect( config.mongodb.localMongo, function(error){
+//   if(error){
+//     console.log(error);
+//   }else{
+//     console.log("COnnected to DB")
+//   }
+// });
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -70,6 +70,6 @@ var twit = new Twitter(config.twitter);
 var io = require('socket.io').listen(server);
 
 // Set a stream listener for tweets matching tracking keywords
-twit.stream('statuses/filter',{ track: 'javascript'}, function(stream){
-  //tweetController(stream,io);
-});
+// twit.stream('statuses/filter',{ track: 'javascript'}, function(stream){
+//   //tweetController(stream,io);
+// });
