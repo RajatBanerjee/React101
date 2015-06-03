@@ -1,14 +1,14 @@
 # React101
-npm install
+######npm install
 
 Install's all dependencies
 
-npm run build
+######npm run build
 
 Build's and browserify's
 
-npm run watch
+######npm run watch
 
 watchify and then browserify
 
-node server or nodemon server (if youh have nodemon installed)
+######node server or nodemon server (if youh have nodemon installed)
