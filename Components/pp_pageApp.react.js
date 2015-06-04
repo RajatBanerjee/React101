@@ -6,7 +6,6 @@ var BottomBar = require('./pp_BottomBarComponent.react.js');
 
 var pp_pageApp = React.createClass({
 	getInitialState:  function(props) {
-		console.log(this.props);
 		props=props || this.props;
 		return {Title:props.Title,Hero:props.Hero,BottomBar:props.BottomBar};
 	},

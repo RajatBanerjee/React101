@@ -1,25 +1,21 @@
-var React = require('react'),
-  express = require('express'),
-  router = express.Router()
-  httpRequest = require('../Utils/HttpRequestModule'),
-  log=  require('../Utils/logger'),
-  productModel = require('../Models/productModel');
+var React = require('react');
+var  express = require('express');
+var  router = express.Router();
+var  httpRequest = require('../Utils/HttpRequestModule');
+var  metaTagBuilder = require('../Utils/metaTagBuilder');
+var  log=  require('../Utils/logger');
+var  productModel = require('../Models/productModel');
 
 var productPageComponent = require('../Components/pp_pageApp.react.js');
+
   /*
   	router configuration after /Product/*
    */
   
   router.get("/", function(req,res){
-  	log.info("--------------arrived here---------");
-
-
-    var meta= httpRequest.makeGetRequest("http://api.art.com/ECommerceAPI.svc/jsonp/SEOMetaInfoGet?apiKey=519BAAC8E607413CA1FC043C92D08AAD&sessionId=A0F866D6907D411395E5CEDB6C359357&pageSourceType=ProductPage&itemId=9045049&categoryID=6126&pageNumber=1",null,function(err,data){
-      metaTags= data.d.metaTags;
-      
-    });
+    var seoUrl= "http://api.art.com/ECommerceAPI.svc/jsonp/SEOMetaInfoGet?apiKey=519BAAC8E607413CA1FC043C92D08AAD&sessionId=A0F866D6907D411395E5CEDB6C359357&pageSourceType=ProductPage&itemId=9045049&categoryID=6126&pageNumber=1";
   	var url ="http://api.art.com/EcommerceAPI.svc/jsonp/CatalogItemGet?apiKey=519BAAC8E607413CA1FC043C92D08AAD&sessionId=A0F866D6907D411395E5CEDB6C359357&itemId=9045049&lookupType=ItemNumber";
-  	var req = httpRequest.makeGetRequest(url,null,function(err,data){
+  	httpRequest.makeGetRequest(url,null,function(err,data){
   		//get only the First Item of the aarray
   		data = data.d.Items[0];
 
@@ -27,7 +23,6 @@ var productPageComponent = require('../Components/pp_pageApp.react.js');
   		data = productModel.getFlatResponse(data);
   		
   		if(!err){
-
         var titleData ={
           title: data.title,
           artist: data.artist,
@@ -58,13 +53,23 @@ var productPageComponent = require('../Components/pp_pageApp.react.js');
         productPageComponent({Title: titleData,Hero:herodata,BottomBar: bottomBarData})
       );
 
-			res.render('product', {
-        htmlTag: metaTags[0].Value,
-        markup:markup,
-				json: JSON.stringify(data,undefined,2)
-			});
+      var seoTags = metaTagBuilder.getMetaTags(seoUrl,function(err,data){
+          var metaTags =[];
+          for(i=2;i<data.length;i++){
+            metaTags.push(data[i].Value);
+          }
+
+         
+          res.render('product', {
+          htmlTag: data[0].Value,
+          title:data[1].Value,
+          metaTags:metaTags,
+          markup:markup,
+          json: JSON.stringify(data,undefined,2)
+        });
+      })
+  			
   		}
-  		
   	});
   	 
   });
